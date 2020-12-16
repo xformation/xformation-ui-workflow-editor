@@ -10,8 +10,8 @@ export class HTMLProperties extends Component {
                 isRequired: false,
                 type: "",
                 name: '',
-                description: '',
-                placeholder: '',
+                notice: '',
+                placeHolder: '',
                 id: '',
                 errorMessage: '',
                 options: [],
@@ -21,14 +21,14 @@ export class HTMLProperties extends Component {
     };
 
     setProperties = (properties) => {
-        const { title, isRequired, type, name, description, placeholder, id, errorMessage, options, validations } = properties;
+        const { title, isRequired, type, name, notice, placeHolder, id, errorMessage, options, validations } = properties;
         const { formContent } = this.state;
         formContent.title = title;
         formContent.isRequired = isRequired;
         formContent.type = type;
         formContent.name = name;
-        formContent.description = description;
-        formContent.placeholder = placeholder;
+        formContent.notice = notice;
+        formContent.placeHolder = placeHolder;
         formContent.id = id;
         formContent.errorMessage = errorMessage;
         formContent.options = options;
@@ -197,14 +197,14 @@ export class HTMLProperties extends Component {
                             <input type="text" className="form-control" id="Id" name="id" value={formContent["id"]} onChange={this.handleChangeFormContent} />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="Description">Notice</label>
-                            <textarea className="form-control" id="Description" name="description" value={formContent["description"]} onChange={this.handleChangeFormContent}></textarea>
+                            <label htmlFor="notice">Notice</label>
+                            <textarea className="form-control" id="notice" name="notice" value={formContent["notice"]} onChange={this.handleChangeFormContent}></textarea>
                         </div>
                         {
                             (formContent.type === componentType.TEXT || formContent.type === componentType.TEXT_AREA) &&
                             <div className="form-group">
-                                <label htmlFor="PlaceHolder">Place holder</label>
-                                <input type="text" className="form-control" id="PlaceHolder" name="placeholder" value={formContent["placeholder"]} onChange={this.handleChangeFormContent} />
+                                <label htmlFor="placeHolder">Place holder</label>
+                                <input type="text" className="form-control" id="placeHolder" name="placeHolder" value={formContent["placeHolder"]} onChange={this.handleChangeFormContent} />
                             </div>
                         }
                         {

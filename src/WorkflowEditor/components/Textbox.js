@@ -9,8 +9,8 @@ export class Textbox extends Component {
             isRequired: true,
             name: 'question',
             id: 'question',
-            description: '',
-            placeholder: 'enter name',
+            notice: '',
+            placeHolder: 'enter name',
             errorMessage: 'This field is required.',
             validations: [],
             isActive: false
@@ -19,15 +19,15 @@ export class Textbox extends Component {
     };
 
     getContent = () => {
-        const { id, name, title, isRequired, placeholder, errorMessage, description, validations } = this.state;
+        const { id, name, title, isRequired, placeHolder, errorMessage, notice, validations } = this.state;
         return {
             id,
             name,
             title,
             isRequired,
-            placeholder,
+            placeHolder,
             errorMessage,
-            description,
+            notice,
             validations,
             type: this.props.type
         };
@@ -65,17 +65,17 @@ export class Textbox extends Component {
     };
 
     setProperties = (sendData) => {
-        const { title, isRequired, placeholder, name, description, id, errorMessage, validations } = this.state;
+        const { title, isRequired, placeHolder, name, notice, id, errorMessage, validations } = this.state;
         const { type } = this.props;
         const properties = {
             type,
             title: title,
             id: id,
             name: name,
-            description: description,
+            notice: notice,
             isRequired: isRequired,
             errorMessage: errorMessage,
-            placeholder: placeholder,
+            placeHolder: placeHolder,
             validations: validations,
             ...sendData
         };
@@ -84,13 +84,13 @@ export class Textbox extends Component {
     }
 
     changeProperties = (formContent) => {
-        const { title, placeholder, name, description, id, errorMessage, isRequired, validations } = formContent;
+        const { title, placeHolder, name, notice, id, errorMessage, isRequired, validations } = formContent;
         this.setState({
             title: title,
-            placeholder: placeholder,
+            placeHolder: placeHolder,
             name: name,
             id: id,
-            description: description,
+            notice: notice,
             errorMessage: errorMessage,
             isRequired: isRequired,
             validations: validations,
@@ -109,7 +109,7 @@ export class Textbox extends Component {
     };
 
     render() {
-        const { title, editTitle, isRequired, placeholder, description, errorMessage, isActive } = this.state;
+        const { title, editTitle, isRequired, placeHolder, notice, errorMessage, isActive } = this.state;
         return (
             <div className={`d-block mb-4 question-container ${isActive ? 'active' : ''}`}>
                 <div className="d-block text-right pr-4 pb-1">
@@ -145,12 +145,12 @@ export class Textbox extends Component {
                         }
                     </div>
                     <div className="form-group">
-                        <input type="text" className="form-control" placeholder={placeholder} />
+                        <input type="text" className="form-control" placeHolder={placeHolder} />
                         <p className="mt-1 mb-0">
                             {isRequired && errorMessage}
                         </p>
                         <p className="small mb-0">
-                            {description}
+                            {notice}
                         </p>
                     </div>
                 </div>

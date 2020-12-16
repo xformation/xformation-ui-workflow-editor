@@ -47,6 +47,7 @@ export class WorkflowEditor extends Component {
             formDataContent: {},
             workflowEditor: [],
             showEditorPage: false,
+            currentTabTitle: '',
             tabMetaData: [{
                 title: "",
                 tabTitle: "",
@@ -313,9 +314,12 @@ export class WorkflowEditor extends Component {
     }
 
     showCreateWorkflow = () => {
-        const { showEditorPage, tabs, tabMetaData } = this.state;
+        const { showEditorPage, tabs, tabMetaData, activeTab } = this.state;
         const properties = [];
         for (let i = 0; i < tabs.length; i++) {
+            if (i == activeTab) {
+                tabMetaData[i].tabTitle = tabs[i].label;
+            }
             const compRefs = this.formContentRefs[i];
             let content = [];
             for (let j = 0; j < compRefs.length; j++) {

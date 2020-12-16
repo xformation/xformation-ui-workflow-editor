@@ -12,14 +12,14 @@ export class SelectOption extends Component {
             isRequired: true,
             options: [],
             errorMessage: 'Error message',
-            description: '',
+            notice: '',
             isActive: false
         }
         this.titleRef = React.createRef();
     };
 
     getContent = () => {
-        const {id, name, title, isRequired, options, errorMessage, description} = this.state;
+        const {id, name, title, isRequired, options, errorMessage, notice} = this.state;
         return {
             id,
             name,
@@ -27,7 +27,7 @@ export class SelectOption extends Component {
             isRequired,
             options,
             errorMessage,
-            description,
+            notice,
             type: this.props.type
         };
     };
@@ -165,14 +165,14 @@ export class SelectOption extends Component {
     };
 
     setProperties = (sendData) => {
-        const { id, name, title, isRequired, description, errorMessage, options } = this.state;
+        const { id, name, title, isRequired, notice, errorMessage, options } = this.state;
         const { type } = this.props;
         const properties = {
             type,
             id,
             name,
             title: title,
-            description: description,
+            notice: notice,
             isRequired: isRequired,
             errorMessage: errorMessage,
             options: options,
@@ -184,12 +184,12 @@ export class SelectOption extends Component {
     }
 
     changeProperties = (formContent) => {
-        const { id, name, title, isRequired, description, errorMessage, options } = formContent;
+        const { id, name, title, isRequired, notice, errorMessage, options } = formContent;
         this.setState({
             id,
             name,
             title: title,
-            description: description,
+            notice: notice,
             errorMessage: errorMessage,
             options: options,
             isRequired: isRequired
@@ -207,7 +207,7 @@ export class SelectOption extends Component {
     };
 
     render() {
-        const { title, editTitle, isRequired, description, errorMessage, sendData, isActive } = this.state;
+        const { title, editTitle, isRequired, notice, errorMessage, sendData, isActive } = this.state;
         return (
             <div className={`d-block mb-4 question-container ${isActive ? 'active' : ''}`}>
                 <div className="d-block text-right pr-4 pb-1">
@@ -250,7 +250,7 @@ export class SelectOption extends Component {
                         {errorMessage}
                     </p>
                     <p className="small mb-0">
-                        {description}
+                        {notice}
                     </p>
                 </div>
             </div >
