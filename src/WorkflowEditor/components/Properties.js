@@ -169,6 +169,26 @@ export class HTMLProperties extends Component {
         this.props.onChangeContent(formContent);
     }
 
+    getComponentName = () => {
+        const {formContent} = this.state;
+        if(formContent.type === componentType.TEXT){
+            return "Single Input"
+        } else if(formContent.type === componentType.RADIO){
+            return "Radio Group"
+        } else if(formContent.type === componentType.SELECTBOX){
+            return "Drop Down"
+        } else if(formContent.type === componentType.CHECK_BOX){
+            return "Checkbox"
+        } else if(formContent.type === componentType.FILE){
+            return "Upload File"
+        } else if(formContent.type === componentType.DATE){
+            return "Type Date"
+        } else if(formContent.type === componentType.TEXT_AREA){
+            return "Text Area"
+        }    
+        return "";
+    };
+
     render() {
         const { formContent } = this.state;
         return (
@@ -183,6 +203,7 @@ export class HTMLProperties extends Component {
                         </select>
                     </div>
                     <div className="title">Header</div> */}
+                    <div className="d-block pb-2 title">{this.getComponentName()}</div>
                     <div>
                         <div className="form-group">
                             <label htmlFor="Title">Title</label>
@@ -254,6 +275,5 @@ export class HTMLProperties extends Component {
                 </div>
             </div >
         );
-
     }
 }

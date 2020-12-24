@@ -4,3 +4,5 @@ export * from './SelectOption';
 export * from './TextArea';
 export * from './Textbox';
 export * from './Properties';
+export * from './File';
+export * from './Date';

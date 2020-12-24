@@ -4,6 +4,17 @@ body{
 a{
     cursor: pointer;
 }
+.left-side{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 215px;
+    padding-top: 20px;
+    padding-left: 15px;
+    height: calc(100% - 20px);
+    overflow-y: auto;
+}
 .left-side .heading{
     font-size: 16px;
     line-height: 24px;
@@ -28,6 +39,17 @@ a{
 }
 .left-side ul li:hover{
     background-color: #fdfdfd;
+}
+.right-side{
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    width: 300px;
+    padding-top: 20px;
+    padding-right: 15px;
+    height: calc(100% - 20px);
+    overflow-y: auto;
 }
 .right-side .heading{
     font-size: 16px;
@@ -95,7 +117,7 @@ a{
     padding: 15px;
 }
 .question-container.active{
-    background-color: #f8f9fa;
+    background-color: #eaeaea;
 }
 .question-container-inner{
     border: 1px solid transparent;
@@ -154,14 +176,26 @@ a{
 .required-icon:hover:after{
     background-color: #0056b3;
 }
-
 .center-container{
     position: relative;
+    width: calc(100% - 0px);
+    padding-left: 215px;
+    padding-top: 20px;
 }
+.center-container.full{
+    padding-left: 15px;
+}
+.center-container.full .left-slider{
+    left: 15px;
+}
+.center-container.right-show{
+    width: calc(100% - 315px);
+}
+
 .left-slider{
     position: absolute;
-    left: 15px;
-    top: 0;
+    left: 230px;
+    top: 20px;
     width: 5px;
     height: 100%;
     background-color: #dadada;
@@ -192,7 +226,7 @@ a{
 .right-slider{
     position: absolute;
     right: 15px;
-    top: 0;
+    top: 20px;
     width: 5px;
     height: 100%;
     background-color: #dadada;
@@ -253,4 +287,19 @@ a{
     padding: 0;
     margin: 0;
     list-style: none;
+}
+.form-control.file{
+    padding: .18rem .75rem;
+    font-size: 0.8rem;
+}
+input[type=file],
+input[type=file]::-webkit-file-upload-button {
+    cursor: pointer; 
+}
+.form-control.tab-edit{
+    height: 21px;
+    font-size: 12px;
+    width: 100px;
+    display: inline-block;
+    padding: 5px 7px;
 }

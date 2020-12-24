@@ -221,7 +221,7 @@ export class SelectOption extends Component {
                         isRequired &&
                         <a href={void(0)} onClick={this.toggleIsRequired} className="d-inline-block mr-3 required-icon"></a>
                     }
-                    <div className="d-inline-block mr-3"><b>Singel Input</b></div>
+                    <div className="d-inline-block mr-3"><b>Drop Down</b></div>
                     <div className="d-inline-block">
                         <a href={void(0)}><i className="fa fa-edit"></i> <b onClick={() => this.setProperties({})}>Properties</b> <i className="fa fa-angle-right"></i></a>
                     </div>

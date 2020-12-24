@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import './css/workflow.css';
-import { Textbox, TextArea, Checkbox, RadioGroup, SelectOption, HTMLProperties } from './components';
+import { Textbox, TextArea, Checkbox, RadioGroup, SelectOption, HTMLProperties, File, Date } from './components';
 
 export const componentType = {
     TEXT: "text",
     RADIO: "radio",
     CHECK_BOX: "checkbox",
     TEXT_AREA: "textarea",
-    SELECTBOX: "select"
+    SELECTBOX: "select",
+    FILE: "file",
+    DATE: "date"
 };
 
 export class WorkflowEditor extends Component {
@@ -43,15 +45,27 @@ export class WorkflowEditor extends Component {
                 {
                     title: 'Radio Group', type: componentType.RADIO, value: 'questionChoice', class: 'fa fa-list-ul',
                 },
+                {
+                    title: 'Upload File',
+                    type: componentType.FILE,
+                    value: 'file',
+                    class: 'fa fa-file'
+                },
+                {
+                    title: 'Type Date',
+                    type: componentType.DATE,
+                    value: 'date',
+                    class: 'fa fa-clock-o'
+                },
             ],
             formDataContent: {},
             workflowEditor: [],
             showEditorPage: false,
-            currentTabTitle: '',
             tabMetaData: [{
                 title: "",
                 tabTitle: "",
-                subHeading: ""
+                subHeading: "",
+                apiEndPoint: "",
             }],
             activeLocation: {}
         };
@@ -120,6 +134,10 @@ export class WorkflowEditor extends Component {
         }
         else if (type === componentType.SELECTBOX) {
             tabContent.push(<SelectOption type={type} location={location} ref={ref} setPropertiesData={this.setProperty} key={`comp-${activeTab}-${index}`} onClickDelete={this.onClickDelete} activeLocation={activeLocation} />)
+        } else if (type === componentType.FILE) {
+            tabContent.push(<File type={type} ref={ref} location={location} setPropertiesData={this.setProperty} key={`comp-${activeTab}-${index}`} onClickDelete={this.onClickDelete} activeLocation={activeLocation} />);
+        } else if (type === componentType.DATE) {
+            tabContent.push(<Date type={type} ref={ref} location={location} setPropertiesData={this.setProperty} key={`comp-${activeTab}-${index}`} onClickDelete={this.onClickDelete} activeLocation={activeLocation} />);
         }
         tabContentRef.push(ref);
         formDataContent[activeTab] = tabContent;
@@ -145,7 +163,9 @@ export class WorkflowEditor extends Component {
                 formDataContent[tab].splice(number, 1);
                 this.formContentRefs[tab].splice(number, 1);
                 this.setState({
-                    formDataContent
+                    formDataContent,
+                    activeLocation: {},
+                    showRightPart: false
                 });
             }
         }
@@ -174,7 +194,8 @@ export class WorkflowEditor extends Component {
             tabs: [{
                 label: "Tab 1"
             }],
-            activeLocation: {}
+            activeLocation: {},
+            showRightPart: false
         });
         this.formContentRefs = {};
     }
@@ -187,7 +208,8 @@ export class WorkflowEditor extends Component {
         tabMetaData.push({
             title: "",
             tabTitle: "",
-            subHeading: ""
+            subHeading: "",
+            apiEndPoint: "",
         });
         this.setState({
             tabs,
@@ -220,9 +242,9 @@ export class WorkflowEditor extends Component {
 
                 <li key={`tab-${i}`} className={`nav-item `}>
                     <a className={i === activeTab ? 'nav-link active' : 'nav-link'} onClick={(e) => this.navigateTab(i)} href={void (0)}>
-                        {tab.editTitle === false && tab.label}&nbsp;
+                        {!tab.editTitle && tab.label}&nbsp;
 
-                        {tab.editTitle === true && <input type="text" value={tab.label} name="title" onChange={(e) => this.handleStateChange(e, i)} onBlur={() => this.onFocusOutTitle(i)} />}
+                        {tab.editTitle && <input type="text" className="form-control tab-edit" value={tab.label} name="title" onChange={(e) => this.handleStateChange(e, i)} onBlur={() => this.onFocusOutTitle(i)} />}
 
                         <i className="fa fa-edit edit" onClick={(e) => this.editTab(i)}></i>
                         <i className="fa fa-trash" onClick={(e) => this.deleteTab(i)}></i>
@@ -306,6 +328,10 @@ export class WorkflowEditor extends Component {
                         <label>Sub Heading</label>
                         <input type="text" className="form-control" value={tabMetaData[i]["subHeading"]} onChange={e => this.handleTabMetaDataChange(i, e)} name="subHeading" />
                     </div>
+                    <div className="form-group">
+                        <label>ApiEndPoint</label>
+                        <input type="text" className="form-control" value={tabMetaData[i]["apiEndPoint"]} onChange={e => this.handleTabMetaDataChange(i, e)} name="apiEndPoint" />
+                    </div>
                     {formDataContent[i] && formDataContent[i].map(value => value)}
                 </div>
             );
@@ -342,71 +368,67 @@ export class WorkflowEditor extends Component {
     render() {
         const { showSidebar, showRightPart, showEditorPage, workflowEditor, properties, } = this.state;
         return (
-            <div className="editor-container pt-4 pb-4">
-                < div className="container-fluid">
-                    <div className="row">
-                        <div className={(showSidebar === true) ? "col-lg-3 col-md-3 col-sm-12 left-side" : ""}>
-                            {showSidebar === true && <div className="d-block">
-                                <div className="d-block pb-2 heading">Toolbox</div>
-                                <ul>
-                                    {this.displaySideBar()}
-                                </ul>
-                            </div>}
+            <div className="editor-container">
+                <div className={(showSidebar === true) ? "left-side" : ""}>
+                    {showSidebar === true && <div className="d-block mb-4">
+                        <div className="d-block pb-2 heading">Toolbox</div>
+                        <ul>
+                            {this.displaySideBar()}
+                        </ul>
+                    </div>}
+                </div>
+                <div className={(showSidebar === true && showRightPart === false) ? "center-container left-show" : (showSidebar === true && showRightPart === true) ? "center-container right-show" : (showSidebar === false && showRightPart === true) ? "center-container right-show full" : "center-container full"}>
+                    <div className="left-slider">
+                        {showSidebar === true &&
+                            <i className="fa fa-angle-left" onClick={this.showHideSidebar}></i>
+                        }
+                        {showSidebar === false &&
+                            <i className="fa fa-angle-right" onClick={this.showHideSidebar}></i>
+                        }
+                    </div>
+                    <div className="d-block px-4">
+                        <div className="d-block pb-4">
+                            <button className="btn btn-primary mr-2" onClick={this.clearServeyForm}>Clear</button>
+                            <button className="btn btn-primary mr-2" onClick={this.showCreateWorkflow}>Create Workflow</button>
                         </div>
-                        <div className={(showSidebar === true && showRightPart === true) ? "col-lg-6 col-md-6 col-sm-12 center-container" : ((showSidebar === false && showRightPart === true) || (showSidebar === true && showRightPart === false)) ? "col-lg-9 col-md-9 col-sm-12 center-container" : "col-lg-12 col-md-12 col-sm-12 center-container"}>
-                            <div className="left-slider">
-                                {showSidebar === true &&
-                                    <i className="fa fa-angle-left" onClick={this.showHideSidebar}></i>
-                                }
-                                {showSidebar === false &&
-                                    <i className="fa fa-angle-right" onClick={this.showHideSidebar}></i>
-                                }
+                        <div className={`${showEditorPage ? 'd-none' : 'd-block'}`}>
+                            <ul className="nav nav-tabs">
+                                {this.displayTabs()}
+                                <li className="nav-item">
+                                    <a className="nav-link" onClick={this.addTab} href={void (0)}>
+                                        Add New Tab&nbsp;
+                                        <i className="fa fa-plus"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div className="tab-content clearfix position-relative bg-white border border-top-0">
+                                {this.displayTabsContent()}
                             </div>
-                            <div className="d-block px-4">
-                                <div className="d-block pb-4">
-                                    <button className="btn btn-primary mr-2" onClick={this.clearServeyForm}>Clear</button>
-                                    <button className="btn btn-primary mr-2" onClick={this.showCreateWorkflow}>Create Workflow</button>
+                        </div>
+                        {showEditorPage &&
+                            <div className="d-block pb-4">
+                                <button className="btn btn-primary mr-2" onClick={this.showCreateWorkflow}><i className="fa fa-arrow-left"></i> Back</button>
+                                <div className="tab-content clearfix position-relative bg-white border border-top-0 py-3">
+                                    <textarea className="form-control" rows={5} value={properties}></textarea>
                                 </div>
-                                <div className={`pb-4 ${showEditorPage ? 'd-none' : 'd-block'}`}>
-                                    <ul className="nav nav-tabs">
-                                        {this.displayTabs()}
-                                        <li className="nav-item">
-                                            <a className="nav-link" onClick={this.addTab} href={void (0)}>
-                                                Add New Tab&nbsp;
-                                                <i className="fa fa-plus"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <div className="tab-content clearfix position-relative bg-white border border-top-0 py-3">
-                                        {this.displayTabsContent()}
-                                    </div>
-                                </div>
-                                {showEditorPage &&
-                                    <div className="d-block pb-4">
-                                        <button className="btn btn-primary mr-2" onClick={this.showCreateWorkflow}><i className="fa fa-arrow-left"></i> Back</button>
-                                        <div className="tab-content clearfix position-relative bg-white border border-top-0 py-3">
-                                            <textarea className="form-control" rows={5} value={properties}></textarea>
-                                        </div>
-                                    </div>
-                                }
                             </div>
-                            <div className="right-slider">
-                                {showRightPart === false &&
-                                    <i className="fa fa-angle-left" onClick={this.showRightbar}></i>
-                                }
-                                {showRightPart === true &&
-                                    <i className="fa fa-angle-right" onClick={this.showRightbar}></i>
-                                }
-                            </div>
-                        </div>
-                        <div className={`col-lg-3 col-md-3 col-sm-12 right-side ${showRightPart ? '' : 'd-none'}`}>
-                            <div className="d-block">
-                                <HTMLProperties ref={this.propertiesRef} onChangeContent={this.onChangeProperties} />
-                            </div>
-                        </div>
+                        }
+                    </div>
+                    <div className="right-slider">
+                        {showRightPart === false &&
+                            <i className="fa fa-angle-left" onClick={this.showRightbar}></i>
+                        }
+                        {showRightPart === true &&
+                            <i className="fa fa-angle-right" onClick={this.showRightbar}></i>
+                        }
                     </div>
                 </div>
-            </div >
+                <div className={`right-side ${showRightPart ? '' : 'd-none'}`}>
+                    <div className="d-block">
+                        <HTMLProperties ref={this.propertiesRef} onChangeContent={this.onChangeProperties} />
+                    </div>
+                </div>
+            </div>
         );
     }
 }
