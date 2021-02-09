@@ -61,9 +61,9 @@ export class WorkflowEditor extends Component {
             formDataContent: {},
             workflowEditor: [],
             showEditorPage: false,
+            radiocount: 0,
             tabMetaData: [{
                 title: "",
-                tabTitle: "",
                 subHeading: "",
                 apiEndPoint: "",
             }],
@@ -111,7 +111,7 @@ export class WorkflowEditor extends Component {
     };
 
     displayFormContent = (fieldData) => {
-        const { formDataContent, activeTab, activeLocation } = this.state;
+        const { formDataContent, activeTab, activeLocation, radiocount } = this.state;
         const { type, value } = fieldData;
         const tabContent = formDataContent[activeTab] || [];
         const tabContentRef = this.formContentRefs[activeTab] || [];
@@ -127,7 +127,10 @@ export class WorkflowEditor extends Component {
             tabContent.push(<Checkbox type={type} location={location} ref={ref} setPropertiesData={this.setProperty} key={`comp-${activeTab}-${index}`} onClickDelete={this.onClickDelete} activeLocation={activeLocation} />);
         }
         else if (type === componentType.RADIO) {
-            tabContent.push(<RadioGroup type={type} location={location} ref={ref} setPropertiesData={this.setProperty} key={`comp-${activeTab}-${index}`} onClickDelete={this.onClickDelete} activeLocation={activeLocation} />);
+            tabContent.push(<RadioGroup type={type} name={radiocount} location={location} ref={ref} setPropertiesData={this.setProperty} key={`comp-${activeTab}-${index}`} onClickDelete={this.onClickDelete} activeLocation={activeLocation} />);
+            this.setState({
+                radiocount: radiocount + 1,
+            })
         }
         else if (type === componentType.TEXT_AREA) {
             tabContent.push(<TextArea type={type} location={location} ref={ref} setPropertiesData={this.setProperty} key={`comp-${activeTab}-${index}`} onClickDelete={this.onClickDelete} activeLocation={activeLocation} />);
@@ -207,7 +210,6 @@ export class WorkflowEditor extends Component {
         formDataContent[length] = [];
         tabMetaData.push({
             title: "",
-            tabTitle: "",
             subHeading: "",
             apiEndPoint: "",
         });
@@ -320,10 +322,10 @@ export class WorkflowEditor extends Component {
                         <label>Title</label>
                         <input type="text" className="form-control" value={tabMetaData[i]["title"]} onChange={e => this.handleTabMetaDataChange(i, e)} name="title" />
                     </div>
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <label>Tab Title</label>
                         <input type="text" className="form-control" value={tabMetaData[i]["tabTitle"]} onChange={e => this.handleTabMetaDataChange(i, e)} name="tabTitle" />
-                    </div>
+                    </div> */}
                     <div className="form-group">
                         <label>Sub Heading</label>
                         <input type="text" className="form-control" value={tabMetaData[i]["subHeading"]} onChange={e => this.handleTabMetaDataChange(i, e)} name="subHeading" />

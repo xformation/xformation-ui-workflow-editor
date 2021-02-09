@@ -14,6 +14,7 @@ export class HTMLProperties extends Component {
                 placeHolder: '',
                 id: '',
                 errorMessage: '',
+                dropdownval: [],
                 options: [],
                 validations: [],
             },
@@ -21,9 +22,10 @@ export class HTMLProperties extends Component {
     };
 
     setProperties = (properties) => {
-        const { title, isRequired, type, name, notice, placeHolder, id, errorMessage, options, validations } = properties;
+        const { title, isRequired, type, name, notice, placeHolder, id, errorMessage, options, validations, value } = properties;
         const { formContent } = this.state;
         formContent.title = title;
+        formContent.value = value;
         formContent.isRequired = isRequired;
         formContent.type = type;
         formContent.name = name;
@@ -68,6 +70,40 @@ export class HTMLProperties extends Component {
         this.props.onChangeContent(formContent);
     }
 
+    handleoptioanschecked = (index, e) => {
+        const { formContent } = this.state;
+        formContent.options[index].isChecked = e.target.checked;
+        for (let i = 0; i < formContent.options.length; i++) {
+            if (i == index) {
+                if (e.target.checked) {
+                    formContent.value.push(formContent.options[i].value);
+                } else {
+                    for (let j = 0; j < formContent.value.length; j++) {
+                        if (formContent.options[i].value === formContent.value[j]) {
+                            formContent.value.splice(j, 1);
+                        }
+                    }
+                }
+            }
+        }
+        this.setState({
+            formContent
+        });
+        this.props.onChangeContent(formContent);
+    }
+
+    onChangeradioState = (index, e) => {
+        const { formContent } = this.state;
+        formContent.options[index].isChecked = e.target.checked;
+        let radioval = [];
+        formContent.options[index].isChecked = e.target.checked;
+        radioval.push(formContent.options[index].value);
+        this.setState({
+            formContent
+        })
+        this.props.onChangeContent(formContent);
+    }
+
     renderOptions = () => {
         const { formContent } = this.state;
         let retData = [];
@@ -75,17 +111,32 @@ export class HTMLProperties extends Component {
             let row = formContent.options[i];
             retData.push(
                 <div key={`options-${i}`} className="d-block mb-3">
-                    <div className="d-inline-block w-75 align-top">
-                        <div className="d-inline-block w-50 pr-1">
+                    <div className="d-inline-block w-100 align-top">
+                        <div className="d-inline-block align-top w-25 pr-1">
                             <input type="text" className="form-control" name="value" value={row.value} onChange={(e) => this.handleOptionChange(e, i)} />
                         </div>
-                        <div className="d-inline-block w-50 pl-1">
+                        <div className="d-inline-block align-top w-25 pl-1">
                             <input type="text" className="form-control" name="label" value={row.label} onChange={(e) => this.handleOptionChange(e, i)} />
                         </div>
+
+                        <div className="d-inline-block align-top w-25 pl-1">
+                            {(row.isChecked && formContent.type === componentType.CHECK_BOX) &&
+                                <div className="form-check">
+                                    <input type="checkbox" className="form-check-input" checked={row.isChecked} onChange={(e) => this.handleoptioanschecked(i, e)} />
+                                </div>
+                            }
+                            {formContent.type === componentType.RADIO &&
+                                <div className="form-check">
+                                    <input type="radio" name='radiodata-props' checked={formContent.value.indexOf(row.value) !== -1} onChange={(e) => this.onChangeradioState(i, e)} className="form-check-input" />
+                                </div>
+                            }
+                            <div className="d-inline-block w-25 align-top">
+                                <button className="btn text-primary"><i className="fa fa-times" onClick={e => this.onClickRemoveFormData(i, e)}></i></button>
+                            </div>
+                        </div>
+
                     </div>
-                    <div className="d-inline-block w-25 align-top">
-                        <button className="btn text-primary"><i className="fa fa-times" onClick={e => this.onClickRemoveFormData(i, e)}></i></button>
-                    </div>
+
                 </div>
             );
         }
@@ -94,7 +145,7 @@ export class HTMLProperties extends Component {
 
     addNewOption = () => {
         const { formContent } = this.state;
-        formContent.options.push({ label: `Item ${formContent.options.length + 1}`, value: formContent.options.length + 1 });
+        formContent.options.push({ label: `Item ${formContent.options.length + 1}`, value: formContent.options.length + 1, isChecked: false });
         this.setState({
             formContent
         });
@@ -170,22 +221,22 @@ export class HTMLProperties extends Component {
     }
 
     getComponentName = () => {
-        const {formContent} = this.state;
-        if(formContent.type === componentType.TEXT){
+        const { formContent } = this.state;
+        if (formContent.type === componentType.TEXT) {
             return "Single Input"
-        } else if(formContent.type === componentType.RADIO){
+        } else if (formContent.type === componentType.RADIO) {
             return "Radio Group"
-        } else if(formContent.type === componentType.SELECTBOX){
+        } else if (formContent.type === componentType.SELECTBOX) {
             return "Drop Down"
-        } else if(formContent.type === componentType.CHECK_BOX){
+        } else if (formContent.type === componentType.CHECK_BOX) {
             return "Checkbox"
-        } else if(formContent.type === componentType.FILE){
+        } else if (formContent.type === componentType.FILE) {
             return "Upload File"
-        } else if(formContent.type === componentType.DATE){
+        } else if (formContent.type === componentType.DATE) {
             return "Type Date"
-        } else if(formContent.type === componentType.TEXT_AREA){
+        } else if (formContent.type === componentType.TEXT_AREA) {
             return "Text Area"
-        }    
+        }
         return "";
     };
 
@@ -212,6 +263,10 @@ export class HTMLProperties extends Component {
                         <div className="form-group">
                             <label htmlFor="Title">Name</label>
                             <input type="text" className="form-control" id="Name" name="name" value={formContent["name"]} onChange={this.handleChangeFormContent} />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="Value">Value</label>
+                            <input type="text" className="form-control" id="Value" name="value" value={formContent["value"]} onChange={this.handleChangeFormContent} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="Title">Id</label>
@@ -263,9 +318,10 @@ export class HTMLProperties extends Component {
                         <div>
                             <div className="d-block mt-3 mb-2 sub-title">Form entry</div>
                             <div className="form-group">
-                                <div className="d-block w-75">
-                                    <label htmlFor="Value" className="d-inline-block w-50 text-center">Value</label>
-                                    <label htmlFor="Text" className="d-inline-block w-50 text-center">Text</label>
+                                <div className="d-block w-100">
+                                    <label htmlFor="Value" className="d-inline-block w-25 text-center">Value</label>
+                                    <label htmlFor="Text" className="d-inline-block w-25 text-center">Text</label>
+                                    <label htmlFor="Text" className="d-inline-block w-25 text-center">isSelect</label>
                                 </div>
                                 {this.renderOptions()}
                                 <button className="btn btn-primary" onClick={this.addNewOption}>Add New</button>

@@ -6,6 +6,7 @@ export class TextArea extends Component {
         super(props);
         this.state = {
             title: "Question",
+            value: "question",
             editTitle: false,
             isRequired: true,
             name: 'question',
@@ -20,10 +21,11 @@ export class TextArea extends Component {
     };
 
     getContent = () => {
-        const { id, name, title, isRequired, placeHolder, errorMessage, notice, validations } = this.state;
+        const { id, name, title, isRequired, placeHolder, errorMessage, notice, validations,value } = this.state;
         return {
             id,
             name,
+            value,
             title,
             isRequired,
             placeHolder,
@@ -66,13 +68,14 @@ export class TextArea extends Component {
     };
 
     setProperties = (sendData) => {
-        const { title, isRequired, placeHolder, name, notice, id, errorMessage, validations } = this.state;
+        const { title, isRequired, placeHolder, name, notice, id, errorMessage, validations,value } = this.state;
         const { type } = this.props;
         const properties = {
             type,
             title: title,
             id: id,
             name: name,
+            value: value,
             notice: notice,
             isRequired: isRequired,
             errorMessage: errorMessage,
@@ -85,11 +88,12 @@ export class TextArea extends Component {
     }
 
     changeProperties = (formContent) => {
-        const { title, placeHolder, name, notice, id, errorMessage, isRequired, validations } = formContent;
+        const { title, placeHolder, name, notice, id, errorMessage, isRequired, validations, value } = formContent;
         this.setState({
             title: title,
             placeHolder: placeHolder,
             name: name,
+            value: value,
             id: id,
             notice: notice,
             errorMessage: errorMessage,
@@ -110,7 +114,7 @@ export class TextArea extends Component {
     };
 
     render() {
-        const { title, editTitle, isRequired, notice, errorMessage, placeHolder, isActive } = this.state;
+        const { title, editTitle, isRequired, notice, errorMessage, placeHolder, isActive, value } = this.state;
         return (
             <div className={`d-block mb-4 question-container ${isActive ? 'active' : ''}`}>
                 <div className="d-block text-right pr-4 pb-1">
@@ -146,7 +150,7 @@ export class TextArea extends Component {
                         }
                     </div>
                     <div className="form-group">
-                        <textarea className="form-control" rows={5} placeHolder={placeHolder}></textarea>
+                        <textarea className="form-control" value={value} name="value" rows={5} placeHolder={placeHolder} onChange={this.handleStateChange}></textarea>
                         <p className="mt-1 mb-0">
                             {isRequired && errorMessage}
                         </p>

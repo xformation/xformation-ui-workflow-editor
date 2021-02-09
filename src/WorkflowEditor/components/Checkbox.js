@@ -11,6 +11,7 @@ export class Checkbox extends Component {
             editTitle: false,
             isRequired: true,
             options: [],
+            value: [],
             errorMessage: 'Error message',
             notice: '',
             isActive: false
@@ -19,7 +20,7 @@ export class Checkbox extends Component {
     };
 
     getContent = () => {
-        const {id, name, title, isRequired, options, errorMessage, notice} = this.state;
+        const { id, name, title, isRequired, options, errorMessage, notice, value } = this.state;
         return {
             id,
             name,
@@ -28,6 +29,7 @@ export class Checkbox extends Component {
             options,
             errorMessage,
             notice,
+            value,
             type: this.props.type
         };
     };
@@ -90,8 +92,8 @@ export class Checkbox extends Component {
         for (let i = 0; i < length; i++) {
             let option = options[i];
             if (index == i) {
-                newOptions.push({...option});
-                newOptions.push({...option});
+                newOptions.push({ ...option });
+                newOptions.push({ ...option });
             } else {
                 newOptions.push(option);
             }
@@ -112,6 +114,29 @@ export class Checkbox extends Component {
         this.setProperties({ options });
     };
 
+    onChangecheckboxState = (index, e) => {
+        const { options, value } = this.state;
+        options[index].isChecked = e.target.checked;
+        for (let i = 0; i < options.length; i++) {
+            if (i == index) {
+                if (e.target.checked) {
+                    value.push(options[i].value);
+                } else {
+                    for (let j = 0; j < value.length; j++) {
+                        if (options[i].value === value[j]) {
+                            value.splice(j, 1);
+                        }
+                    }
+                }
+            }
+        }
+        this.setState({
+            options,
+            value
+        })
+        this.setProperties({ options, value });
+    }
+
     renderOptions = () => {
         const { options } = this.state;
         let retData = [];
@@ -120,7 +145,7 @@ export class Checkbox extends Component {
             let option = options[i];
             retData.push(
                 <div key={`check-${i}`} className="form-check">
-                    <input type="checkbox" className="form-check-input" />
+                    <input type="checkbox" className="form-check-input" checked={option.isChecked} onChange={(e) => this.onChangecheckboxState(i, e)} />
                     {
                         !option.isEdit &&
                         <label className="form-check-label">{option.label}</label>
@@ -129,9 +154,9 @@ export class Checkbox extends Component {
                         option.isEdit &&
                         <input type="text" value={option.label} onChange={e => this.onChangeOption(i, e)} onBlur={e => this.onBlurOption(i, e)} />
                     }
-                    <a href={void(0)} className="d-inline-block ml-2" onClick={e => this.onClickEditOption(i, e)}><i className="fa fa-edit" ></i></a>
-                    <a href={void(0)} className="d-inline-block ml-2" onClick={e => this.onClickCopyOption(i, e)}><i className="fa fa-copy"></i></a>
-                    <a href={void(0)} className="d-inline-block ml-2" onClick={e => this.onClickRemoveOption(i, e)}><i className="fa fa-times"></i></a>
+                    <a href={void (0)} className="d-inline-block ml-2" onClick={e => this.onClickEditOption(i, e)}><i className="fa fa-edit" ></i></a>
+                    <a href={void (0)} className="d-inline-block ml-2" onClick={e => this.onClickCopyOption(i, e)}><i className="fa fa-copy"></i></a>
+                    <a href={void (0)} className="d-inline-block ml-2" onClick={e => this.onClickRemoveOption(i, e)}><i className="fa fa-times"></i></a>
                 </div>
             );
         }
@@ -149,7 +174,7 @@ export class Checkbox extends Component {
     onClickAddOption = (e) => {
         e.preventDefault();
         const { options } = this.state;
-        options.push({ label: `Item ${options.length + 1}`, value: options.length + 1 });
+        options.push({ label: `Item ${options.length + 1}`, value: options.length + 1, isChecked: false });
         this.setState({
             options
         });
@@ -157,11 +182,12 @@ export class Checkbox extends Component {
     };
 
     setProperties = (sendData) => {
-        const { id, name, title, isRequired, notice, errorMessage, options } = this.state;
+        const { id, name, title, isRequired, notice, errorMessage, options, value } = this.state;
         const { type } = this.props;
         const properties = {
             type,
             id,
+            value,
             name,
             title: title,
             notice: notice,
@@ -175,7 +201,7 @@ export class Checkbox extends Component {
     }
 
     changeProperties = (formContent) => {
-        const { id, name, title, isRequired, notice, errorMessage, options } = formContent;
+        const { id, name, title, isRequired, notice, errorMessage, options, value } = formContent;
         this.setState({
             id,
             name,
@@ -183,7 +209,8 @@ export class Checkbox extends Component {
             notice: notice,
             errorMessage: errorMessage,
             options: options,
-            isRequired: isRequired
+            isRequired: isRequired,
+            value
         });
     };
 
@@ -202,19 +229,19 @@ export class Checkbox extends Component {
         return (
             <div className={`d-block mb-4 question-container ${isActive ? 'active' : ''}`}>
                 <div className="d-block text-right pr-4 pb-1">
-                    <a href={void(0)} className="float-left"><i className="fa fa-bars"></i></a>
-                    <a href={void(0)} onClick={this.onClickDelete} className="d-inline-block mr-3"><i className="fa fa-times-circle"></i></a>
+                    <a href={void (0)} className="float-left"><i className="fa fa-bars"></i></a>
+                    <a href={void (0)} onClick={this.onClickDelete} className="d-inline-block mr-3"><i className="fa fa-times-circle"></i></a>
                     {
                         !isRequired &&
-                        <a href={void(0)} onClick={this.toggleIsRequired} className="d-inline-block mr-3 required-icon"><span>/</span></a>
+                        <a href={void (0)} onClick={this.toggleIsRequired} className="d-inline-block mr-3 required-icon"><span>/</span></a>
                     }
                     {
                         isRequired &&
-                        <a href={void(0)} onClick={this.toggleIsRequired} className="d-inline-block mr-3 required-icon"></a>
+                        <a href={void (0)} onClick={this.toggleIsRequired} className="d-inline-block mr-3 required-icon"></a>
                     }
                     <div className="d-inline-block mr-3"><b>Checkbox</b></div>
                     <div className="d-inline-block">
-                        <a href={void(0)}><i className="fa fa-edit"></i> <b onClick={() => this.setProperties({})}>Properties</b> <i className="fa fa-angle-right"></i></a>
+                        <a href={void (0)}><i className="fa fa-edit"></i> <b onClick={() => this.setProperties({})}>Properties</b> <i className="fa fa-angle-right"></i></a>
                     </div>
                 </div>
                 <div className="d-block p-3 question-container-inner">
@@ -225,7 +252,7 @@ export class Checkbox extends Component {
                             <span>*</span>
                         }
                         &nbsp;
-                        <a href={void(0)} onClick={this.onClickEditTitle}><i className="fa fa-edit"></i></a>
+                        <a href={void (0)} onClick={this.onClickEditTitle}><i className="fa fa-edit"></i></a>
                     </div>
                     <div className={`pb-3 question-heading ${editTitle ? 'd-block' : 'd-none'}`}>
                         <input type="text" value={title} name="title" onChange={this.handleStateChange} onBlur={this.onFocusOutTitle} ref={this.titleRef} />
@@ -236,7 +263,7 @@ export class Checkbox extends Component {
                     {this.renderOptions()}
                     {errorMessage}
                     <div className="form-group pt-3">
-                        <a href={void(0)} className="d-inline-block mr-3" onClick={this.onClickAddOption}><i className="fa fa-plus"></i></a>
+                        <a href={void (0)} className="d-inline-block mr-3" onClick={this.onClickAddOption}><i className="fa fa-plus"></i></a>
                     </div>
                     {notice}
                 </div>

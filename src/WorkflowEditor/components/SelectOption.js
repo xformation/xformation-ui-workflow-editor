@@ -11,6 +11,7 @@ export class SelectOption extends Component {
             editTitle: false,
             isRequired: true,
             options: [],
+            value: '1',
             errorMessage: 'Error message',
             notice: '',
             isActive: false
@@ -19,7 +20,7 @@ export class SelectOption extends Component {
     };
 
     getContent = () => {
-        const {id, name, title, isRequired, options, errorMessage, notice} = this.state;
+        const { id, name, title, isRequired, options, errorMessage, notice, value } = this.state;
         return {
             id,
             name,
@@ -28,6 +29,7 @@ export class SelectOption extends Component {
             options,
             errorMessage,
             notice,
+            value,
             type: this.props.type
         };
     };
@@ -72,8 +74,8 @@ export class SelectOption extends Component {
         for (let i = 0; i < length; i++) {
             let option = options[i];
             if (index == i) {
-                newoption.push({...option});
-                newoption.push({...option});
+                newoption.push({ ...option });
+                newoption.push({ ...option });
             } else {
                 newoption.push(option);
             }
@@ -109,9 +111,9 @@ export class SelectOption extends Component {
                         option.isEdit &&
                         <input type="text" value={option.label} onChange={e => this.onChangeOption(i, e)} onBlur={e => this.onBlurOption(i, e)} />
                     }
-                    <a href={void(0)} className="d-inline-block ml-2" onClick={e => this.onClickEditOption(i, e)}><i className="fa fa-edit" ></i></a>
-                    <a href={void(0)} className="d-inline-block ml-2" onClick={e => this.onClickCopyOption(i, e)}><i className="fa fa-copy"></i></a>
-                    <a href={void(0)} className="d-inline-block ml-2" onClick={e => this.onClickRemoveOption(i, e)}><i className="fa fa-times"></i></a>
+                    <a href={void (0)} className="d-inline-block ml-2" onClick={e => this.onClickEditOption(i, e)}><i className="fa fa-edit" ></i></a>
+                    <a href={void (0)} className="d-inline-block ml-2" onClick={e => this.onClickCopyOption(i, e)}><i className="fa fa-copy"></i></a>
+                    <a href={void (0)} className="d-inline-block ml-2" onClick={e => this.onClickRemoveOption(i, e)}><i className="fa fa-times"></i></a>
                 </div>
             );
 
@@ -165,12 +167,13 @@ export class SelectOption extends Component {
     };
 
     setProperties = (sendData) => {
-        const { id, name, title, isRequired, notice, errorMessage, options } = this.state;
+        const { id, name, title, isRequired, notice, errorMessage, options, value } = this.state;
         const { type } = this.props;
         const properties = {
             type,
             id,
             name,
+            value,
             title: title,
             notice: notice,
             isRequired: isRequired,
@@ -180,11 +183,11 @@ export class SelectOption extends Component {
         };
         this.props.setPropertiesData(properties, this.props.location);
         this.setIsActive(true);
-        
+
     }
 
     changeProperties = (formContent) => {
-        const { id, name, title, isRequired, notice, errorMessage, options } = formContent;
+        const { id, name, title, isRequired, notice, errorMessage, options, value } = formContent;
         this.setState({
             id,
             name,
@@ -192,7 +195,8 @@ export class SelectOption extends Component {
             notice: notice,
             errorMessage: errorMessage,
             options: options,
-            isRequired: isRequired
+            isRequired: isRequired,
+            value: value
         });
     };
 
@@ -207,23 +211,23 @@ export class SelectOption extends Component {
     };
 
     render() {
-        const { title, editTitle, isRequired, notice, errorMessage, sendData, isActive } = this.state;
+        const { title, editTitle, isRequired, notice, errorMessage, sendData, isActive, value } = this.state;
         return (
             <div className={`d-block mb-4 question-container ${isActive ? 'active' : ''}`}>
                 <div className="d-block text-right pr-4 pb-1">
-                    <a href={void(0)} className="float-left"><i className="fa fa-bars"></i></a>
-                    <a href={void(0)} onClick={this.onClickDelete} className="d-inline-block mr-3"><i className="fa fa-times-circle"></i></a>
+                    <a href={void (0)} className="float-left"><i className="fa fa-bars"></i></a>
+                    <a href={void (0)} onClick={this.onClickDelete} className="d-inline-block mr-3"><i className="fa fa-times-circle"></i></a>
                     {
                         !isRequired &&
-                        <a href={void(0)} onClick={this.toggleIsRequired} className="d-inline-block mr-3 required-icon"><span>/</span></a>
+                        <a href={void (0)} onClick={this.toggleIsRequired} className="d-inline-block mr-3 required-icon"><span>/</span></a>
                     }
                     {
                         isRequired &&
-                        <a href={void(0)} onClick={this.toggleIsRequired} className="d-inline-block mr-3 required-icon"></a>
+                        <a href={void (0)} onClick={this.toggleIsRequired} className="d-inline-block mr-3 required-icon"></a>
                     }
                     <div className="d-inline-block mr-3"><b>Drop Down</b></div>
                     <div className="d-inline-block">
-                        <a href={void(0)}><i className="fa fa-edit"></i> <b onClick={() => this.setProperties({})}>Properties</b> <i className="fa fa-angle-right"></i></a>
+                        <a href={void (0)}><i className="fa fa-edit"></i> <b onClick={() => this.setProperties({})}>Properties</b> <i className="fa fa-angle-right"></i></a>
                     </div>
                 </div>
                 <div className="d-block p-3 question-container-inner">
@@ -234,7 +238,7 @@ export class SelectOption extends Component {
                             <span>*</span>
                         }
                         &nbsp;
-                        <a href={void(0)} onClick={this.onClickEditTitle}><i className="fa fa-edit"></i></a>
+                        <a href={void (0)} onClick={this.onClickEditTitle}><i className="fa fa-edit"></i></a>
                     </div>
                     <div className={`pb-3 question-heading ${editTitle ? 'd-block' : 'd-none'}`}>
                         <input type="text" value={title} name="title" onChange={this.handleStateChange} onBlur={this.onFocusOutTitle} ref={this.titleRef} />
@@ -244,7 +248,7 @@ export class SelectOption extends Component {
                     </div>
                     {this.renderOptions()}
                     <div className="form-group mb-1">
-                        <a href={void(0)} className="d-inline-block mr-3"><i className="fa fa-plus" onClick={this.onClickAddOption}></i></a>
+                        <a href={void (0)} className="d-inline-block mr-3"><i className="fa fa-plus" onClick={this.onClickAddOption}></i></a>
                     </div>
                     <p className="mb-0">
                         {errorMessage}

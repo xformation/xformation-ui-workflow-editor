@@ -10,16 +10,18 @@ export class RadioGroup extends Component {
             title: "Question",
             editTitle: false,
             options: [],
+            value: [],
             isRequired: true,
             errorMessage: 'Error message',
             notice: '',
-            isActive: false
+            isActive: false,
+            radioindex: this.props.name,
         }
         this.titleRef = React.createRef();
     };
 
     getContent = () => {
-        const {id, name, title, isRequired, options, errorMessage, notice} = this.state;
+        const { id, name, title, isRequired, options, errorMessage, notice, value } = this.state;
         return {
             id,
             name,
@@ -28,6 +30,7 @@ export class RadioGroup extends Component {
             options,
             errorMessage,
             notice,
+            value,
             type: this.props.type
         };
     };
@@ -46,7 +49,7 @@ export class RadioGroup extends Component {
         this.setState({
             [name]: value
         });
-        this.setProperties({[name]: value});
+        this.setProperties({ [name]: value });
     };
 
     onFocusOutTitle = () => {
@@ -60,7 +63,7 @@ export class RadioGroup extends Component {
         this.setState({
             isRequired: !this.state.isRequired
         });
-        this.setProperties({isRequired: !this.state.isRequired});
+        this.setProperties({ isRequired: !this.state.isRequired });
     };
 
     onChangeOption = (index, e) => {
@@ -70,8 +73,21 @@ export class RadioGroup extends Component {
         this.setState({
             options
         });
-        this.setProperties({options});
+        this.setProperties({ options });
     };
+
+    onChangeradioState = (index, e) => {
+        let { options, value } = this.state;
+        let radioval = [];
+        // options[index].isChecked = e.target.checked;
+        value = [options[index].value];
+        radioval.push(options[index].value);
+        this.setState({
+            options,
+            value,
+        })
+        this.setProperties({ options, value });
+    }
 
     onBlurOption = (index, e) => {
         const { options } = this.state;
@@ -89,8 +105,8 @@ export class RadioGroup extends Component {
         for (let i = 0; i < length; i++) {
             let option = options[i];
             if (index == i) {
-                newoption.push({...option});
-                newoption.push({...option});
+                newoption.push({ ...option });
+                newoption.push({ ...option });
             } else {
                 newoption.push(option);
             }
@@ -98,7 +114,7 @@ export class RadioGroup extends Component {
         this.setState({
             options: newoption
         });
-        this.setProperties({options});
+        this.setProperties({ options });
     }
 
     onClickRemoveOption = (index, e) => {
@@ -108,17 +124,17 @@ export class RadioGroup extends Component {
         this.setState({
             options
         });
-        this.setProperties({options});
+        this.setProperties({ options });
     };
 
     renderOptions = () => {
-        const { options } = this.state;
+        const { options, value, radioindex } = this.state;
         let retData = [];
         for (let j = 0; j < options.length; j++) {
             let option = options[j];
             retData.push(
                 <div key={`check-${j}`} className="form-check">
-                    <input type="radio" className="form-check-input" />
+                    <input type="radio" name={`radiodata-${radioindex}`} checked={value.indexOf(option.value) !== -1} onClick={(e) => this.onChangeradioState(j, e)} className="form-check-input" />
                     {
                         !option.isEdit &&
                         <label className="form-check-label">{option.label}</label>
@@ -127,9 +143,9 @@ export class RadioGroup extends Component {
                         option.isEdit &&
                         <input type="text" value={option.label} onChange={e => this.onChangeOption(j, e)} onBlur={e => this.onBlurOption(j, e)} />
                     }
-                    <a href={void(0)} className="d-inline-block ml-2"><i className="fa fa-edit" onClick={e => this.onClickEditOption(j, e)}></i></a>
-                    <a href={void(0)} className="d-inline-block ml-2"><i className="fa fa-copy" onClick={e => this.onClickCopyOption(j, e)}></i></a>
-                    <a href={void(0)} className="d-inline-block ml-2"><i className="fa fa-times" onClick={e => this.onClickRemoveOption(j, e)}></i></a>
+                    <a href={void (0)} className="d-inline-block ml-2"><i className="fa fa-edit" onClick={e => this.onClickEditOption(j, e)}></i></a>
+                    <a href={void (0)} className="d-inline-block ml-2"><i className="fa fa-copy" onClick={e => this.onClickCopyOption(j, e)}></i></a>
+                    <a href={void (0)} className="d-inline-block ml-2"><i className="fa fa-times" onClick={e => this.onClickRemoveOption(j, e)}></i></a>
                 </div>
             );
         }
@@ -139,11 +155,11 @@ export class RadioGroup extends Component {
     onClickAddOption = (e) => {
         e.preventDefault();
         const { options } = this.state;
-        options.push({ label: `Item ${options.length + 1}`, value: options.length + 1 });
+        options.push({ label: `Item ${options.length + 1}`, value: options.length + 1, isChecked: false });
         this.setState({
             options
         });
-        this.setProperties({options});
+        this.setProperties({ options });
     };
 
     onClickEditOption = (index, e) => {
@@ -156,7 +172,7 @@ export class RadioGroup extends Component {
     };
 
     setProperties = (sendData) => {
-        const { id, name, title, isRequired, notice, errorMessage, options } = this.state;
+        const { id, name, title, isRequired, notice, errorMessage, options, value } = this.state;
         const { type } = this.props;
         const properties = {
             type,
@@ -166,6 +182,7 @@ export class RadioGroup extends Component {
             notice: notice,
             isRequired: isRequired,
             errorMessage: errorMessage,
+            value: value,
             options: options,
             ...sendData
         };
@@ -174,7 +191,7 @@ export class RadioGroup extends Component {
     }
 
     changeProperties = (formContent) => {
-        const { id, name, title, isRequired, notice, errorMessage, options } = formContent;
+        const { id, name, title, isRequired, notice, errorMessage, options, value } = formContent;
         this.setState({
             id,
             name,
@@ -182,6 +199,7 @@ export class RadioGroup extends Component {
             notice: notice,
             errorMessage: errorMessage,
             options: options,
+            value: value,
             isRequired: isRequired
         });
     };
@@ -201,11 +219,11 @@ export class RadioGroup extends Component {
         return (
             <div className={`d-block mb-4 question-container ${isActive ? 'active' : ''}`}>
                 <div className="d-block text-right pr-4 pb-1">
-                    <a href={void(0)} className="float-left"><i className="fa fa-bars"></i></a>
-                    <a href={void(0)} onClick={this.onClickDelete} className="d-inline-block mr-3"><i className="fa fa-times-circle"></i></a>
+                    <a href={void (0)} className="float-left"><i className="fa fa-bars"></i></a>
+                    <a href={void (0)} onClick={this.onClickDelete} className="d-inline-block mr-3"><i className="fa fa-times-circle"></i></a>
                     {
                         !isRequired &&
-                        <a href={void(0)} onClick={this.toggleIsRequired} className="d-inline-block mr-3 required-icon"><span>/</span></a>
+                        <a href={void (0)} onClick={this.toggleIsRequired} className="d-inline-block mr-3 required-icon"><span>/</span></a>
                     }
                     {
                         isRequired &&
@@ -213,7 +231,7 @@ export class RadioGroup extends Component {
                     }
                     <div className="d-inline-block mr-3"><b>Radio Group</b></div>
                     <div className="d-inline-block">
-                        <a href={void(0)}><i className="fa fa-edit"></i> <b onClick={()=>this.setProperties({})}>Properties</b> <i className="fa fa-angle-right"></i></a>
+                        <a href={void (0)}><i className="fa fa-edit"></i> <b onClick={() => this.setProperties({})}>Properties</b> <i className="fa fa-angle-right"></i></a>
                     </div>
                 </div>
                 <div className="d-block p-3 question-container-inner">
@@ -224,7 +242,7 @@ export class RadioGroup extends Component {
                             <span>*</span>
                         }
                         &nbsp;
-                        <a href={void(0)} onClick={this.onClickEditTitle}><i className="fa fa-edit"></i></a>
+                        <a href={void (0)} onClick={this.onClickEditTitle}><i className="fa fa-edit"></i></a>
                     </div>
                     <div className={`pb-3 question-heading ${editTitle ? 'd-block' : 'd-none'}`}>
                         <input type="text" value={title} name="title" onChange={this.handleStateChange} onBlur={this.onFocusOutTitle} ref={this.titleRef} />
@@ -234,7 +252,7 @@ export class RadioGroup extends Component {
                     </div>
                     {this.renderOptions()}
                     <div className="form-group pt-3">
-                        <a href={void(0)} className="d-inline-block mr-3"><i className="fa fa-plus" onClick={this.onClickAddOption}></i></a>
+                        <a href={void (0)} className="d-inline-block mr-3"><i className="fa fa-plus" onClick={this.onClickAddOption}></i></a>
                     </div>
                     <p className="mb-0">
                         {errorMessage}
