@@ -6,3 +6,4 @@ export * from './Textbox';
 export * from './Properties';
 export * from './File';
 export * from './Date';
+export * from './label';

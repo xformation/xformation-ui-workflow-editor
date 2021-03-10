@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './css/workflow.css';
-import { Textbox, TextArea, Checkbox, RadioGroup, SelectOption, HTMLProperties, File, Date } from './components';
+import { Textbox, TextArea, Checkbox, RadioGroup, SelectOption, HTMLProperties, File, Date, Label } from './components';
 
 export const componentType = {
     TEXT: "text",
@@ -9,7 +9,8 @@ export const componentType = {
     TEXT_AREA: "textarea",
     SELECTBOX: "select",
     FILE: "file",
-    DATE: "date"
+    DATE: "date",
+    LABEL: "label"
 };
 
 export class WorkflowEditor extends Component {
@@ -56,6 +57,9 @@ export class WorkflowEditor extends Component {
                     type: componentType.DATE,
                     value: 'date',
                     class: 'fa fa-clock-o'
+                },
+                {
+                    title: 'Label', type: componentType.LABEL, class: 'fa fa-text-width',
                 },
             ],
             formDataContent: {},
@@ -141,6 +145,8 @@ export class WorkflowEditor extends Component {
             tabContent.push(<File type={type} ref={ref} location={location} setPropertiesData={this.setProperty} key={`comp-${activeTab}-${index}`} onClickDelete={this.onClickDelete} activeLocation={activeLocation} />);
         } else if (type === componentType.DATE) {
             tabContent.push(<Date type={type} ref={ref} location={location} setPropertiesData={this.setProperty} key={`comp-${activeTab}-${index}`} onClickDelete={this.onClickDelete} activeLocation={activeLocation} />);
+        } else if (type === componentType.LABEL) {
+            tabContent.push(<Label type={type} ref={ref} location={location} setPropertiesData={this.setProperty} key={`comp-${activeTab}-${index}`} onClickDelete={this.onClickDelete} activeLocation={activeLocation} />);
         }
         tabContentRef.push(ref);
         formDataContent[activeTab] = tabContent;
